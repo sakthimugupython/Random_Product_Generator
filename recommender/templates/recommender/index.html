@@ -1,0 +1,130 @@
+{% extends 'recommender/base.html' %}
+
+{% block title %}Products - ShopSmart{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <h1><i class="fas fa-shopping-bag"></i> Discover Amazing Products</h1>
+    <p>Personalized recommendations powered by AI</p>
+</div>
+
+<div class="search-container">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="searchInput" class="form-label"><i class="fas fa-search"></i> Search Products</label>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by name or brand...">
+        </div>
+        <div class="col-md-6">
+            <label for="categoryFilter" class="form-label"><i class="fas fa-filter"></i> Filter by Category</label>
+            <select id="categoryFilter" class="form-select">
+                <option value="">All Categories</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="loading" id="loading">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading products...</p>
+</div>
+
+<div id="productsContainer" class="row g-4">
+    <!-- Products will be loaded here -->
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let allProducts = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadProducts();
+    });
+
+    function loadProducts() {
+        document.getElementById('loading').style.display = 'block';
+        
+        fetch('/api/products/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    allProducts = data.products;
+                    displayProducts(allProducts);
+                    populateCategories();
+                }
+                document.getElementById('loading').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+            });
+    }
+
+    function displayProducts(products) {
+        const container = document.getElementById('productsContainer');
+        container.innerHTML = '';
+
+        if (products.length === 0) {
+            container.innerHTML = '<div class="col-12"><p class="text-center text-muted"><i class="fas fa-inbox"></i> No products found</p></div>';
+            return;
+        }
+
+        products.forEach(product => {
+            const productId = product.id || product.product_id;
+            const card = document.createElement('div');
+            card.className = 'col-md-4 col-lg-3';
+            const imageUrl = product.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop';
+            card.innerHTML = `
+                <div class="card product-card h-100">
+                    <div class="product-image">
+                        <img src="${imageUrl}" alt="${product.name || 'Product'}">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">${product.name || 'Product'}</h5>
+                        <span class="badge-category">${product.category || 'N/A'}</span>
+                        <p class="price-tag">₹${product.price || 'N/A'}</p>
+                        <p class="rating"><i class="fas fa-star"></i> ${product.rating || 'N/A'}</p>
+                        <a href="/product/${productId}/" class="btn btn-primary w-100"><i class="fas fa-eye"></i> View Details</a>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function populateCategories() {
+        const categories = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+        const select = document.getElementById('categoryFilter');
+        
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            select.appendChild(option);
+        });
+    }
+
+    document.getElementById('searchInput').addEventListener('input', filterProducts);
+    document.getElementById('categoryFilter').addEventListener('change', filterProducts);
+
+    function filterProducts() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const category = document.getElementById('categoryFilter').value;
+
+        const filtered = allProducts.filter(product => {
+            const matchesSearch = !searchTerm || 
+                (product.name && product.name.toLowerCase().includes(searchTerm)) ||
+                (product.brand && product.brand.toLowerCase().includes(searchTerm));
+            
+            const matchesCategory = !category || product.category === category;
+            
+            return matchesSearch && matchesCategory;
+        });
+
+        displayProducts(filtered);
+    }
+</script>
+{% endblock %}

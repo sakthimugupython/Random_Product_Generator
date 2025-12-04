@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Product Recommendation Engine{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --forest-green: #1B5E20;
+            --lime-green: #81C784;
+            --light-moss: #C5D8A4;
+            --antique-white: #FAE9D4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--antique-white);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--forest-green);
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--forest-green) 0%, #0d3d10 100%);
+            box-shadow: 0 4px 15px rgba(27, 94, 32, 0.2);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--antique-white) !important;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link {
+            color: var(--antique-white) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+
+        .nav-link:hover {
+            color: var(--lime-green) !important;
+            transform: translateY(-2px);
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(27, 94, 32, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: #fff;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 32px rgba(27, 94, 32, 0.15);
+        }
+
+        .product-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-image {
+            height: 220px;
+            background: linear-gradient(135deg, var(--light-moss) 0%, var(--antique-white) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--forest-green);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            color: var(--forest-green);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .card-text {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .price-tag {
+            color: var(--forest-green);
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin: 0.5rem 0;
+        }
+
+        .rating {
+            color: #f39c12;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--forest-green) 0%, var(--lime-green) 100%);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            transition: all 0.3s ease;
+            margin-top: auto;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0d3d10 0%, var(--forest-green) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(27, 94, 32, 0.3);
+            color: #fff;
+        }
+
+        .btn-outline-secondary {
+            color: var(--forest-green);
+            border-color: var(--forest-green);
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--forest-green);
+            border-color: var(--forest-green);
+            color: #fff;
+        }
+
+        /* Forms */
+        .form-control, .form-select {
+            border: 2px solid var(--light-moss);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--forest-green);
+            box-shadow: 0 0 0 0.2rem rgba(27, 94, 32, 0.15);
+            background-color: #fff;
+        }
+
+        .form-label {
+            color: var(--forest-green);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Sections */
+        .section-title {
+            color: var(--forest-green);
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--forest-green), var(--lime-green));
+            border-radius: 2px;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .spinner-border {
+            color: var(--forest-green);
+            width: 3rem;
+            height: 3rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--forest-green) 0%, var(--lime-green) 100%);
+            color: #fff;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(27, 94, 32, 0.2);
+        }
+
+        .hero-section h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-section p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        /* Search Bar */
+        .search-container {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            gap: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--forest-green) 0%, #0d3d10 100%);
+            color: var(--antique-white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 3px solid var(--lime-green);
+        }
+
+        footer p {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Badge */
+        .badge-category {
+            background-color: var(--light-moss);
+            color: var(--forest-green);
+            font-weight: 600;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* Main Container */
+        main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-title {
+                font-size: 1.4rem;
+            }
+
+            .card-title {
+                font-size: 1rem;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-leaf"></i> ShopSmart</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <p><i class="fas fa-copyright"></i> 2025 ShopSmart - AI-Powered Recommendations. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

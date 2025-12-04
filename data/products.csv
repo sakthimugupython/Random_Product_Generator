@@ -1,0 +1,21 @@
+product_id,product_name,category,price,brand,rating,stock
+1,Wireless Earbuds,Electronics,1499,Boat,4.3,120
+2,Bluetooth Speaker,Electronics,1999,JBL,4.5,80
+3,Smart Watch,Electronics,2499,Noise,4.1,150
+4,Fitness Band,Electronics,999,Mi,4.0,200
+5,Laptop Backpack,Accessories,799,Wildcraft,4.2,90
+6,Men's Running Shoes,Fashion,1599,Adidas,4.4,70
+7,Women's Casual Shoes,Fashion,1299,Puma,4.2,60
+8,Cotton T-Shirt,Fashion,499,H&M,4.0,180
+9,Jeans,Fashion,999,Levis,4.3,100
+10,DSLR Camera,Electronics,39999,Canon,4.7,40
+11,USB-C Cable,Electronics,199,Ambrane,4.1,300
+12,Portable Hard Disk,Electronics,4599,Seagate,4.4,80
+13,Oven Toaster Grill,Home Appliances,2999,Philips,4.3,50
+14,Mixer Grinder,Home Appliances,3499,Bajaj,4.1,60
+15,Induction Stove,Home Appliances,2599,Prestige,4.2,75
+16,Pressure Cooker,Home Appliances,1599,Hawkins,4.5,90
+17,Office Chair,Furniture,5499,GreenSoul,4.6,30
+18,Study Table,Furniture,3999,Ikea,4.3,25
+19,Bed Mattress,Furniture,8999,Sleepwell,4.5,20
+20,Table Lamp,Home Decor,999,Wipro,4.1,110
