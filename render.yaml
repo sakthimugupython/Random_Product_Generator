@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: shopsmart-recommendation-engine
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: gunicorn backend.wsgi
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.7
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: "*"
